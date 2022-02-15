@@ -11,6 +11,10 @@ class ViewController: UIViewController {
     
     @IBOutlet var colorField: UIView!
     
+    @IBOutlet var redDisplayLaible: UILabel!
+    @IBOutlet var greenDisplayLaible: UILabel!
+    @IBOutlet var blueDisplayLaible: UILabel!
+    
     @IBOutlet var redTune: UISlider!
     @IBOutlet var greenTune: UISlider!
     @IBOutlet var blueTune: UISlider!
@@ -19,141 +23,140 @@ class ViewController: UIViewController {
     @IBOutlet var greenDisplayValue: UITextField!
     @IBOutlet var blueDisplayValue: UITextField!
     
-    @IBOutlet var redDisplayLaible: UILabel!
-    @IBOutlet var greenDisplayLaible: UILabel!
-    @IBOutlet var blueDisplayLaible: UILabel!
-    
-    
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         colorField.layer.cornerRadius = colorField.frame.width / 12
         
-        //Setup slider
-        redTune.value = 0.75
-        greenTune.value = 0.5
-        blueTune.value = 0.25
-        
-        redTune.minimumValue = 0
-        redTune.maximumValue = 1
-        greenTune.minimumValue = 0
-        greenTune.maximumValue = 1
-        blueTune.minimumValue = 0
-        blueTune.maximumValue = 1
+        setColor()
+        setValueForLaible()
+        setValueForTextField()
     
-        redDisplayValue.text = String((round(redTune.value * 100) / 100))
-        greenDisplayValue.text = String((round(greenTune.value * 100) / 100))
-        blueDisplayValue.text = String((round(blueTune.value * 100) / 100))
-        redDisplayValue.delegate = self
-        
-        redDisplayLaible.text = String(redTune.value)
-        greenDisplayLaible.text = String(greenTune.value)
-        blueDisplayLaible.text = String(blueTune.value)
-        
-        let rtoolBar = UIToolbar(frame: CGRect(x: 0, y: 0,
-                                              width: view.frame.size.width,
-                                              height: 50))
-        let gtoolBar = UIToolbar(frame: CGRect(x: 0, y: 0,
-                                              width: view.frame.size.width,
-                                              height: 50))
-        let btoolBar = UIToolbar(frame: CGRect(x: 0, y: 0,
-                                              width: view.frame.size.width,
-                                              height: 50))
-        
-        let flexibleSpace  = UIBarButtonItem(barButtonSystemItem: .fixedSpace,
-                                             target: self,
-                                             action: nil)
-        
-        let rdoneButton = UIBarButtonItem(title: "Done", style: .done, target: self, action: #selector(inputColorValue))
-        let gdoneButton = UIBarButtonItem(title: "Done", style: .done, target: self, action: #selector(greenInputColor))
-        let bdoneButton = UIBarButtonItem(title: "Done", style: .done, target: self, action: #selector(blueUnputColor))
-        
-        
-        rtoolBar.items = [flexibleSpace, rdoneButton]
-        rtoolBar.sizeToFit()
-        gtoolBar.items = [flexibleSpace, gdoneButton]
-        gtoolBar.sizeToFit()
-        btoolBar.items = [flexibleSpace, bdoneButton]
-        btoolBar.sizeToFit()
-        redDisplayValue.inputAccessoryView = rtoolBar
-        greenDisplayValue.inputAccessoryView = gtoolBar
-        blueDisplayValue.inputAccessoryView = btoolBar
+        addDoneButtonTo(redDisplayValue)
+        addDoneButtonTo(greenDisplayValue)
+        addDoneButtonTo(blueDisplayValue)
         
     }
         
-    @IBAction func changeRedTune() {
-        let redValue = String((round(redTune.value * 100) / 100))
+    @IBAction func rgbSlider(_ sender: UISlider) {
+        switch sender.tag {
+    case 0:
+        redDisplayLaible.text = string(from: sender)
+        redDisplayValue.text = string(from: sender)
+    case 1:
+        greenDisplayLaible.text = string(from: sender)
+        greenDisplayValue.text = string(from: sender)
+    case 2:
+        blueDisplayLaible.text = string(from: sender)
+        blueDisplayValue.text = string(from: sender)
+    default: break
+    }
         
-        redDisplayValue.text = redValue
-        redDisplayLaible.text = redValue
+    setColor()
+}
+    
+    private func setColor() {
         colorField.backgroundColor = UIColor(displayP3Red: CGFloat(redTune.value),
-                                             green: CGFloat(greenTune.value),
-                                             blue: CGFloat(blueTune.value),
-                                             alpha: 1
-        )
-    }
-    
-    
-    @IBAction func changeGreenTune() {
-        let greenValue = String((round(greenTune.value * 100) / 100))
-        
-        greenDisplayLaible.text = greenValue
-        greenDisplayValue.text = greenValue
-        colorField.backgroundColor = UIColor(displayP3Red: CGFloat(redTune.value),
-                                             green: CGFloat(greenTune.value),
-                                             blue: CGFloat(blueTune.value),
-                                             alpha: 1
-        )
-    }
-    
-    
-    @IBAction func changeBlueTune() {
-        let blueValue = String((round(blueTune.value * 100) / 100))
-        
-        blueDisplayLaible.text = blueValue
-        blueDisplayValue.text = blueValue
-        colorField.backgroundColor = UIColor(displayP3Red: CGFloat(redTune.value),
-                                             green: CGFloat(greenTune.value),
-                                             blue: CGFloat(blueTune.value),
-                                             alpha: 1
-        )
-    }
-        
-    @IBAction func inputColorValue() {
-        redDisplayValue.resignFirstResponder()
-        colorField.backgroundColor = UIColor(displayP3Red: CGFloat(Double(redDisplayValue.text!)!),
                                              green: CGFloat(greenTune.value),
                                              blue: CGFloat(blueTune.value),
                                              alpha: 1)
-        redTune.value = Float(redDisplayValue.text!)!
-        redDisplayLaible.text = String(redDisplayValue.text!)
+    }
+    
+    private func setValueForLaible() {
+        redDisplayLaible.text = string(from: redTune)
+        greenDisplayLaible.text = string(from: greenTune)
+        blueDisplayLaible.text = string(from: blueTune)
+    }
+    
+    private func setValueForTextField(){
+        redDisplayValue.text = string(from: redTune)
+        greenDisplayValue.text = string(from: greenTune)
+        blueDisplayValue.text = string(from: blueTune)
+    }
+    
+    
+    
+    private func string(from slider: UISlider) -> String {
+        return String(format: "%0.2f", slider.value)
         
     }
-    
-    @IBAction func greenInputColor() {
-        greenDisplayValue.resignFirstResponder()
-        colorField.backgroundColor = UIColor(displayP3Red: CGFloat(redTune.value),
-                                             green: CGFloat(Double(greenDisplayValue.text!)!),
-                                             blue: CGFloat(blueTune.value),
-                                             alpha: 1)
-        greenTune.value = Float(greenDisplayValue.text!)!
-        greenDisplayLaible.text = String(greenDisplayValue.text!)
-    }
-    
-    @IBAction func blueUnputColor() {
-        blueDisplayValue.resignFirstResponder()
-        colorField.backgroundColor = UIColor(displayP3Red: CGFloat(redTune.value),
-                                             green: CGFloat(greenTune.value),
-                                             blue: CGFloat(Double(blueDisplayValue.text!)!),
-                                             alpha: 1)
-        blueTune.value = Float(blueDisplayValue.text!)!
-        blueDisplayLaible.text = String(blueDisplayValue.text!)
-    }
-    
 }
 
 
 extension ViewController: UITextFieldDelegate {
+    
+    //hide keyboard by tap on "Done"
+    func textFieldShouldEndEditing(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
+    }
+    
+    //hide keyboard tap on outside Text View
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesBegan(touches, with: event)
+        
+        view.endEditing(true) //Скрывает клавиатуруб вызванную для любого объекта
+    }
+    
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        guard let text = textField.text else { return }
+        
+        if let currentValue = Float(text) {
+            
+            switch textField.tag {
+            case 0: redTune.value = currentValue
+            case 1: greenTune.value = currentValue
+            case 2: blueTune.value = currentValue
+            default: break
+            }
+            
+            setColor()
+            setValueForLaible()
+            
+        } else {
+            showAlert(title: "Wrong format!", message: "Please enter correct value")
+        }
+    }
 }
-//asfsd
+
+extension ViewController {
+    
+    //Метод для отображения кнопки "Готово" на цифровой клавиатуре
+    private func addDoneButtonTo(_ textField: UITextField) {
+        
+        let toolBar = UIToolbar()
+        textField.inputAccessoryView = toolBar
+        toolBar.sizeToFit()
+                
+        let doneButton = UIBarButtonItem(title: "Done",
+                                         style: .done,
+                                         target: self,
+                                         action: #selector(didTapDone))
+        
+        let flexibleSpace  = UIBarButtonItem(barButtonSystemItem: .fixedSpace,
+                                             target: self,
+                                             action: nil)
+
+        toolBar.items = [flexibleSpace, doneButton]
+    }
+    
+    @objc private func didTapDone() {
+        view.endEditing(true)
+    }
+    
+    
+    private func showAlert(title: String, message: String) {
+        
+        let alert = UIAlertController(title: title,
+                                      message: message,
+                                      preferredStyle: .alert)
+        let okAction = UIAlertAction(title: "Ok", style: .default)
+        alert.addAction(okAction)
+        present(alert, animated: true)
+    }
+}
+
+
+
+
+
